@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 
 const { Command } = require("commander");
+const { spawn } = require("child_process");
 const ora = require("ora");
 const chalk = require("chalk");
+const path = require("path");
 const { findError } = require("../lib/matcher");
 const { formatError } = require("../lib/formatter");
 
@@ -10,39 +12,57 @@ const program = new Command();
 
 program
   .name("errlens")
-  .description("Professional JS error analysis for the terminal")
-  .version("1.1.0")
-  .argument("[error]", "The error message to analyze")
-  .option("-j, --json", "Output results in raw JSON format") // For automation
-  .action((errorInput, options) => {
-    // If no argument is provided, show help and exit
-    if (!errorInput) {
-      program.help();
-      return;
-    }
+  .description("Professional JS Error Analytics")
+  .version("1.3.1");
 
-    // JSON Mode (No spinner, no colors, just data)
-    if (options.json) {
-      const result = findError(errorInput);
-      console.log(JSON.stringify(result || { error: "No match found" }, null, 2));
-      return;
-    }
+program
+  .command("run <file>")
+  .description("Run a Javascript file and analyze crashes")
+  .action((file) => {
+    const filePath = path.resolve(process.cwd(), file);
+    const spinner = ora(`Running ${chalk.yellow(file)}...`).start();
+    
+    // stdio: ['inherit', 'pipe', 'pipe'] 
+    // This allows us to pipe stdout and stderr while keeping the process interactive
+    const child = spawn("node", [filePath]);
 
-    // Standard Mode
-    const spinner = ora({ text: "Analyzing error trace...", color: "cyan" }).start();
+    let errorOutput = "";
 
-    setTimeout(() => {
-      const result = findError(errorInput);
+    // Stream logs to terminal in REAL-TIME
+    child.stdout.on("data", (data) => {
+      // Clear spinner temporarily to print log, then restart (better UX)
+      spinner.stop();
+      process.stdout.write(data);
+      spinner.start();
+    });
 
-      if (!result) {
-        spinner.fail(chalk.red(" Analysis Failed: Error not found in database."));
-        console.log(chalk.dim("\nTry searching a shorter snippet of the error message."));
-        return;
+    // Capture stderr for analysis
+    child.stderr.on("data", (data) => {
+      errorOutput += data.toString();
+    });
+
+    child.on("close", (code) => {
+      spinner.stop();
+      
+      if (code === 0) {
+        console.log(chalk.green.bold("\n✨ Process finished successfully."));
+      } else {
+        const { count, matches } = findError(errorOutput);
+
+        if (count > 0) {
+          console.log(chalk.bold.cyan(`\n🚀 ErrLens Analysis (${count} Issue(s)):`));
+          matches.forEach(m => console.log(formatError(m)));
+        } else {
+          console.log(chalk.red.bold("\n❌ Crash detected (No known fix in database):"));
+          console.log(chalk.gray(errorOutput));
+        }
       }
+      process.exit(code);
+    });
 
-      spinner.succeed(chalk.bold("Analysis complete!"));
-      console.log(formatError(result));
-    }, 500);
+    child.on("error", (err) => {
+      spinner.fail(chalk.red(`System Error: ${err.message}`));
+    });
   });
 
 program.parse(process.argv);

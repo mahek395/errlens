@@ -4,7 +4,10 @@
     "match": "Cannot read properties of undefined",
     "explanation": "You are trying to access a property on a variable that is currently empty.",
     "why": "The variable wasn't initialized, or an API call hasn't finished yet.",
-    "fixes": ["Use optional chaining: user?.name", "Set a default value: data || []"],
+    "fixes": [
+      "Use optional chaining: user?.name",
+      "Set a default value: data || []"
+    ],
     "example": "const name = user?.name || 'Guest';"
   },
   {
@@ -116,7 +119,10 @@
     "match": "E11000",
     "explanation": "You're saving data with a 'unique' field that already exists.",
     "why": "Usually a duplicate Email or Username in the DB.",
-    "fixes": ["Check if data exists before saving", "Use unique error handling"],
+    "fixes": [
+      "Check if data exists before saving",
+      "Use unique error handling"
+    ],
     "example": "UserSchema.path('email').validate(...) "
   },
   {
@@ -398,5 +404,28 @@
     "why": "Typo in the package name or it's a private package.",
     "fixes": ["Check package spelling", "npm login"],
     "example": "npm install express"
+  },
+  {
+    "name": "SyntaxError: Unexpected end of input",
+    "match": "Unexpected end of input",
+    "explanation": "Your code stopped abruptly, likely due to a missing closing bracket.",
+    "why": "You opened a ( [ or { but forgot to close it with ) ] or }.",
+    "fixes": [
+      "Check for missing closing parentheses )",
+      "Check for missing curly braces }",
+      "Ensure all quotes ' or \" are closed"
+    ],
+    "example": "console.log('Hello'); // Make sure the ) is there!"
+  },
+  {
+    "name": "SyntaxError: Missing Parenthesis",
+    "match": "missing ) after argument list",
+    "explanation": "You forgot to close a function call with a ')'.",
+    "why": "A parenthesis was opened but the line ended or another symbol appeared before it was closed.",
+    "fixes": [
+      "Add a ')' at the end of your function call",
+      "Check if you accidentally deleted a ')' while typing"
+    ],
+    "example": "console.log('Hello');"
   }
 ]
