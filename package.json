@@ -1,24 +1,53 @@
 {
   "name": "errlens",
   "version": "1.0.3",
-  "description": "A CLI tool that explains JavaScript/Node.js errors in plain English.",
+  "description": "Professional CLI tool that explains JavaScript and Node.js errors in plain English with actionable fixes directly in your terminal.",
+  "type": "module",
   "main": "./bin/index.js",
-  "author": "BeyteFlow (https://github.com/BeyteFlow)",
-  "license": "MIT",
   "bin": {
     "errlens": "./bin/index.js"
   },
+  "preferGlobal": true,
+  "author": "BeyteFlow (https://github.com/BeyteFlow)",
+  "license": "MIT",
+  "keywords": [
+    "javascript",
+    "nodejs",
+    "cli",
+    "error",
+    "debugging",
+    "stacktrace",
+    "developer-tools",
+    "terminal",
+    "diagnostics",
+    "productivity",
+    "devtools",
+    "error-handler"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "bin/",
+    "lib/",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "test": "node --test test/**/*.test.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/BeyteFlow/errlens.git"
+    "url": "https://github.com/BeyteFlow/errlens.git"
   },
   "bugs": {
     "url": "https://github.com/BeyteFlow/errlens/issues"
   },
   "homepage": "https://github.com/BeyteFlow/errlens#readme",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/BeyteFlow"
+  },
   "dependencies": {
     "boxen": "^8.0.1",
     "chalk": "^5.6.2",
