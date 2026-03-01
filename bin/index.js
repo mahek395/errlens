@@ -24,7 +24,7 @@ program
     
     // stdio: ['inherit', 'pipe', 'pipe'] 
     // This allows us to pipe stdout and stderr while keeping the process interactive
-    const child = spawn("node", [filePath]);
+    const child = spawn(process.execPath, [filePath], { stdio: ["inherit", "pipe", "pipe"] });
 
     let errorOutput = "";
 
@@ -41,9 +41,15 @@ program
       errorOutput += data.toString();
     });
 
-    child.on("close", (code) => {
+    child.on("close", (code, signal) => {
       spinner.stop();
-      
+
+      if (code === null) {
+        console.log(chalk.red.bold(`\n⚠️ Process killed by signal: ${signal}`));
+        process.exit(1);
+        return;
+      }
+
       if (code === 0) {
         console.log(chalk.green.bold("\n✨ Process finished successfully."));
       } else {
@@ -57,11 +63,12 @@ program
           console.log(chalk.gray(errorOutput));
         }
       }
-      process.exit(code);
+      process.exit(code ?? 1);
     });
 
     child.on("error", (err) => {
       spinner.fail(chalk.red(`System Error: ${err.message}`));
+      process.exit(1);
     });
   });
 
