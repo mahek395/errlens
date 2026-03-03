@@ -84,6 +84,53 @@ Get machine-readable results for your own tooling or automated reports:
 errlens "is not a function" --json
 ```
 
+Run a script and write the JSON report directly to a file in CI:
+
+```bash
+errlens run test.js --json > ci-report.json
+```
+
+In `--json` mode, ErrLens prints only JSON (no spinner, colors, or terminal boxes).
+
+Example response from `run`:
+
+```json
+{
+  "code": 0,
+  "count": 0,
+  "matches": []
+}
+```
+
+Example response from `analyze <errorString>` (match found):
+
+```json
+{
+  "code": 1,
+  "count": 1,
+  "matches": [
+    {
+      "name": "TypeError: Cannot read properties of undefined",
+      "match": "Cannot read properties of undefined",
+      "explanation": "You are trying to access a property on a variable that is currently empty.",
+      "why": "The variable wasn't initialized, or an API call hasn't finished yet.",
+      "fixes": [
+        "Use optional chaining: user?.name",
+        "Set a default value: data || []"
+      ],
+      "example": "const name = user?.name || 'Guest';"
+    }
+  ]
+}
+```
+
+Exit codes (useful for CI):
+
+- `run <file>` exits with the child process exit code.
+- `analyze <errorString>` exits with `1` when matches are found (intentional, so CI can fail when known errors are detected), otherwise `0`.
+
+This follows Unix conventions where `0` means success and non-zero means failure. If you prefer success-on-detection in CI, invert the check in your pipeline logic (for example, treat exit code `1` from `analyze <errorString>` as a pass condition).
+
 ---
 
 ## 🧠 System Architecture
