@@ -40,11 +40,11 @@
 
 **Automatic Error Monitoring (`errlens run test.js`):**
 
-![ErrLens Run Demo](assets/run-demo.gif)
+![ErrLens Run Demo](assets/errlens-run.gif)
 
 **Manual Error Analysis (`errlens analyze "..."`):**
 
-![ErrLens Analyze Demo](assets/analyze-demo.gif)
+![ErrLens Analyze Demo](assets/errlens-analyze.gif)
 
 ---
 
